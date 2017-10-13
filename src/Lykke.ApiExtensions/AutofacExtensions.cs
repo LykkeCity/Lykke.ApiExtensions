@@ -8,12 +8,12 @@ namespace Lykke.ApiExtensions
 {
     public static class AutofacExtensions
     {
-        public static void RegisterApiExtensionDependencies(this ContainerBuilder builder, ClientAuthSettings clientAuthSettings)
+        public static void RegisterApiExtensionDependencies(this ContainerBuilder builder, Func<IComponentContext, ClientAuthSettings> clientAuthSettings)
         {
             builder.RegisterType<MemoryCacheIpPolicyStore>().As<IIpPolicyStore>().SingleInstance();
             builder.RegisterType<MemoryCacheRateLimitCounterStore>().As<IRateLimitCounterStore>().SingleInstance();
 
-            builder.RegisterInstance(clientAuthSettings).AsSelf().SingleInstance();
+            builder.Register(clientAuthSettings).AsSelf().SingleInstance();
         }
     }
 }
