@@ -1,7 +1,10 @@
-﻿using Lykke.WebExtensions;
+﻿using System;
+using Lykke.WebExtensions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Lykke.ApiExtensions
 {
@@ -25,11 +28,16 @@ namespace Lykke.ApiExtensions
             app.UseMiddleware<ClientAuthMiddleware>();
             app.UseMiddleware<ThrottlingMiddleware>();
             app.UseMiddleware<ClientBansMiddleware>();
-            app.UseJwtBearerAuthentication(new JwtBearerOptions
-            {
-                AutomaticAuthenticate = true,
-                AutomaticChallenge = true
-            });
+        }
+
+        public static void AddApiExtensions(this IServiceCollection services)
+        {
+            services.AddAuthentication(options =>
+                {
+                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer();
         }
     }
 }
